@@ -50,7 +50,6 @@ final simpleStateMachineDemoPage = TreeStatePage.forState(
         children: [
           Router(
             routerDelegate: NestedStateTreeRouterDelegate(
-              stateKey: AppStates.simpleStateMachineDemoRunning,
               pages: [
                 simple.enterTextPage,
                 simple.toLowercasePage,
