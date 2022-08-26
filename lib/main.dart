@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
     pages: [
       landingPage,
       simpleStateMachineDemoPage,
+      authStateMachineDemoPage,
     ],
   );
 
