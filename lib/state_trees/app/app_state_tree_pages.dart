@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:state_tree_router/state_tree_router.dart';
 import 'package:state_tree_router_demo/state_trees/app/app_state_tree.dart';
+import 'package:state_tree_router_demo/state_trees/auth/models/models.dart';
 import 'package:state_tree_router_demo/state_trees/simple/simple_state_tree_pages.dart' as simple;
 import 'package:state_tree_router_demo/state_trees/auth/auth_state_tree_pages.dart' as auth;
 import 'package:tree_state_machine/tree_state_machine.dart';
@@ -103,7 +104,8 @@ final authStateMachineDemoPage = TreeStatePage.forState(
             routerDelegate: ChildTreeStateRouterDelegate(
               pages: [
                 authStateMachineReadyPage,
-                authStateMachineRunninPage,
+                authStateMachineRunningPage,
+                authStateMachineFinishedPage
               ],
             ),
           ),
@@ -117,13 +119,30 @@ final authStateMachineReadyPage = makeStateMachineReadyPage(
   AppStates.authStateMachineDemoReady,
 );
 
-final authStateMachineRunninPage = makeStateMachineRunningPage(
+final authStateMachineRunningPage = makeStateMachineRunningPage(
   AppStates.authStateMachineDemoRunning,
   NestedStateTreeRouterDelegate(
     pages: [
       auth.loginPage,
+      auth.registrationPage,
     ],
   ),
+);
+
+final authStateMachineFinishedPage = TreeStatePage.forDataState<AuthenticatedUser>(
+  AppStates.authStateMachineFinished,
+  (buildContent, user, currentState) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Welcome ${user.name}'),
+        ElevatedButton(
+          child: const Text('Logout'),
+          onPressed: () => currentState.post(Messages.goToAuthStateMachineDemo),
+        ),
+      ],
+    );
+  },
 );
 
 TreeStatePage makeStateMachineReadyPage(StateKey stateKey) {

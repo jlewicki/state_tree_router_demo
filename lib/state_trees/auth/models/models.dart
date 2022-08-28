@@ -1,8 +1,10 @@
 class AuthenticatedUser {
+  AuthenticatedUser(this.firstName, this.lastName, this.email);
+
   final String firstName;
   final String lastName;
   final String email;
-  AuthenticatedUser(this.firstName, this.lastName, this.email);
+  String get name => '$firstName $lastName';
 
   @override
   int get hashCode => Object.hash(firstName, lastName, email);

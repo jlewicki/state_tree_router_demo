@@ -99,7 +99,7 @@ class AuthStateTree {
       _S.registration,
       InitialData(() => RegisterData()),
       (b) {
-        b.onMessageValue(Messages.submitRegistration, (b) {
+        b.onMessage<SubmitDemographics>((b) {
           // Model the registration action as an asynchronous Result. The 'registering' status while the
           // operation is in progress is modeled as flag in RegisterData, and a state transition (to
           // Authenticated) does not occur until the operation is complete.
@@ -140,7 +140,9 @@ class AuthStateTree {
     b.dataState<LoginData>(
       _S.login,
       InitialData(() => LoginData()),
-      emptyState,
+      (b) {
+        b.onMessageValue(Messages.goToRegister, (b) => b.goTo(AuthStates.registration));
+      },
       initialChild: InitialChild(_S.loginEntry),
       parent: _S.unauthenticated,
     );
