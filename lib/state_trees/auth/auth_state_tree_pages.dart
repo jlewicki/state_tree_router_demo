@@ -3,106 +3,106 @@ import 'package:state_tree_router/state_tree_router.dart';
 import 'package:state_tree_router_demo/state_trees/auth/auth_state_tree.dart';
 import 'package:tree_state_machine/tree_state_machine.dart';
 
-final loginPage = TreeStatePage.forDataState<LoginData>(AuthStates.login, (
-  BuildContext context,
-  LoginData data,
-  CurrentState currentState,
-) {
-  var formKey = GlobalKey<FormState>();
-  bool isAuthenticating = currentState.isInState(AuthStates.authenticating);
-  String? email = data.email;
-  String? password = data.password;
+final loginPage = TreeStatePage.forDataState<LoginData>(
+  AuthStates.login,
+  (BuildContext context, LoginData data, CurrentState currentState) {
+    var formKey = GlobalKey<FormState>();
+    bool isAuthenticating = currentState.isInState(AuthStates.authenticating);
+    String? email = data.email;
+    String? password = data.password;
 
-  return StatefulBuilder(
-    builder: (context, setState) {
-      String? _validateEmail(String? value) {
-        return (email = value)?.isEmpty ?? true ? 'Please enter an email address.' : null;
-      }
-
-      String? _validatePassword(String? value) {
-        return (password = value)?.isEmpty ?? true ? 'Please enter a password' : null;
-      }
-
-      String _errorMessage(LoginData data) {
-        return isAuthenticating ? '' : data.errorMessage;
-      }
-
-      void _submit(CurrentState currentState) {
-        if (formKey.currentState?.validate() ?? false) {
-          currentState.post(SubmitCredentials(email!, password!));
+    return StatefulBuilder(
+      builder: (context, setState) {
+        String? _validateEmail(String? value) {
+          return (email = value)?.isEmpty ?? true ? 'Please enter an email address.' : null;
         }
-      }
 
-      return Form(
-        key: formKey,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const Spacer(),
-              AuthFormFieldGroup(
-                title: 'What is your name?',
-                formFields: [
-                  AuthFormField(
-                    'firstName',
-                    'Email Addres',
-                    data.email,
-                    validator: _validateEmail,
-                    isEnabled: !isAuthenticating,
-                  ),
-                  AuthFormField(
-                    'lastName',
-                    'Password',
-                    data.password,
-                    validator: _validatePassword,
-                  )
-                ],
-              ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      ElevatedButton(
-                        onPressed: isAuthenticating
-                            ? null
-                            : () {
-                                FocusScope.of(context).unfocus();
-                                _submit(currentState);
-                              },
-                        child: Text(isAuthenticating ? 'Authenticating...' : 'Log In'),
-                      ),
-                      Center(
-                        child: Text(_errorMessage(data), style: const TextStyle(color: Colors.red)),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 8.0, 0),
-                            child: Text('Don\'t have an account?'),
-                          ),
-                          ElevatedButton(
-                              onPressed: () => currentState.post(Messages.goToRegister),
-                              child: const Text('Register'))
-                        ],
-                      ),
-                    ],
+        String? _validatePassword(String? value) {
+          return (password = value)?.isEmpty ?? true ? 'Please enter a password' : null;
+        }
+
+        String _errorMessage(LoginData data) {
+          return isAuthenticating ? '' : data.errorMessage;
+        }
+
+        void _submit(CurrentState currentState) {
+          if (formKey.currentState?.validate() ?? false) {
+            currentState.post(SubmitCredentials(email!, password!));
+          }
+        }
+
+        return Form(
+          key: formKey,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                const Spacer(),
+                AuthFormFieldGroup(
+                  title: 'What is your name?',
+                  formFields: [
+                    AuthFormField(
+                      'firstName',
+                      'Email Addres',
+                      data.email,
+                      validator: _validateEmail,
+                      isEnabled: !isAuthenticating,
+                    ),
+                    AuthFormField(
+                      'lastName',
+                      'Password',
+                      data.password,
+                      validator: _validatePassword,
+                    )
+                  ],
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        ElevatedButton(
+                          onPressed: isAuthenticating
+                              ? null
+                              : () {
+                                  FocusScope.of(context).unfocus();
+                                  _submit(currentState);
+                                },
+                          child: Text(isAuthenticating ? 'Authenticating...' : 'Log In'),
+                        ),
+                        Center(
+                          child:
+                              Text(_errorMessage(data), style: const TextStyle(color: Colors.red)),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 8.0, 0),
+                              child: Text('Don\'t have an account?'),
+                            ),
+                            ElevatedButton(
+                                onPressed: () => currentState.post(Messages.goToRegister),
+                                child: const Text('Register'))
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-});
+        );
+      },
+    );
+  },
+);
 
 final registrationPage = TreeStatePage.forDataState<RegisterData>(
   AuthStates.registration,

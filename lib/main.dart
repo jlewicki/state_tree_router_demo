@@ -25,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   late final _routerDelegate = StateTreeRouterDelegate(
     stateMachine: TreeStateMachine(_appStateTreeBuilder),
     scaffoldPages: true,
+    displayStateMachineErrors: true,
     pages: [
       landingPage,
       simpleStateMachineDemoPage,

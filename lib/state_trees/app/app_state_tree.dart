@@ -97,7 +97,10 @@ class AppStateTree {
         label: 'Auth State Machine',
       ),
       (b) => b.onMachineDone((b) => b.enterChannel(_authenticatedChannel, (ctx) {
-            var user = ctx.data.nestedState.dataValue<AuthenticatedData>()!.user;
+            // var user = ctx.data.nestedState.dataValue<AuthenticatedData>()!.user;
+            // return user;
+
+            var user = ctx.data.nestedCurrentState.dataValue<AuthenticatedUser>();
             return user;
           })),
     );
