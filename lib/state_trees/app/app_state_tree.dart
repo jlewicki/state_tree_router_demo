@@ -4,6 +4,7 @@ import 'package:state_tree_router_demo/state_trees/auth/services/services.dart';
 import 'package:state_tree_router_demo/state_trees/simple/simple_state_tree.dart';
 import 'package:tree_state_machine/tree_state_machine.dart';
 import 'package:tree_state_machine/tree_builders.dart';
+import 'package:state_tree_router/state_tree_router.dart';
 
 //
 // State keys
@@ -31,7 +32,7 @@ enum Messages { goToSimpleStateMachineDemo, goToAuthStateMachineDemo, startState
 
 class AppStateTree {
   StateTreeBuilder treeBuilder() {
-    var b = StateTreeBuilder.withRoot(
+    var builder = StateTreeBuilder.withRoot(
       _S.root,
       (b) {
         b.onMessageValue(
@@ -45,16 +46,19 @@ class AppStateTree {
       },
       InitialChild(_S.landing),
       logName: 'app',
+      extensions: (b) => b.isRoutingHandler(),
     );
 
-    b.state(_S.landing, emptyState);
+    builder.state(_S.landing, emptyState);
 
-    b.state(
-      _S.simpleStateMachineDemo,
-      emptyState,
-      initialChild: InitialChild(_S.simpleStateMachineDemoReady),
-    );
-    b.state(
+    builder
+        .state(
+          _S.simpleStateMachineDemo,
+          emptyState,
+          initialChild: InitialChild(_S.simpleStateMachineDemoReady),
+        )
+        .routable();
+    builder.state(
       _S.simpleStateMachineDemoReady,
       (b) {
         b.onMessageValue(
@@ -64,7 +68,7 @@ class AppStateTree {
       },
       parent: _S.simpleStateMachineDemo,
     );
-    b.machineState(
+    builder.machineState(
       _S.simpleStateMachineDemoRunning,
       InitialMachine.fromTree(
         (_) => SimpleStateTree().treeBuilder(),
@@ -74,12 +78,14 @@ class AppStateTree {
       parent: _S.simpleStateMachineDemo,
     );
 
-    b.state(
-      _S.authStateMachineDemo,
-      initialChild: InitialChild(_S.authStateMachineDemoReady),
-      emptyState,
-    );
-    b.state(
+    builder
+        .state(
+          _S.authStateMachineDemo,
+          initialChild: InitialChild(_S.authStateMachineDemoReady),
+          emptyState,
+        )
+        .routable();
+    builder.state(
       _S.authStateMachineDemoReady,
       (b) {
         b.onMessageValue(
@@ -89,7 +95,7 @@ class AppStateTree {
       },
       parent: _S.authStateMachineDemo,
     );
-    b.machineState(
+    builder.machineState(
       _S.authStateMachineDemoRunning,
       parent: _S.authStateMachineDemo,
       InitialMachine.fromTree(
@@ -104,7 +110,7 @@ class AppStateTree {
             return user;
           })),
     );
-    b.dataState<AuthenticatedUser>(
+    builder.dataState<AuthenticatedUser>(
       _S.authStateMachineFinished,
       parent: _S.authStateMachineDemo,
       InitialData.fromChannel(
@@ -114,6 +120,6 @@ class AppStateTree {
       (b) {},
     );
 
-    return b;
+    return builder;
   }
 }

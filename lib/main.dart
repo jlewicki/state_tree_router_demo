@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:state_tree_router/state_tree_router.dart';
 import 'package:state_tree_router_demo/state_trees/app/app_state_tree.dart';
 import 'package:state_tree_router_demo/state_trees/app/app_state_tree_pages.dart';
+import 'package:tree_state_machine/tree_builders.dart';
 import 'package:tree_state_machine/tree_state_machine.dart';
 
 void main() async {
@@ -22,8 +23,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late final _appStateTree = AppStateTree();
   late final _appStateTreeBuilder = _appStateTree.treeBuilder();
+  late final _routeParser = StateTreeRouteInformationParser(_appStateTreeBuilder.rootKey);
+  late final _buildContext = TreeBuildContext(onTreeNodeBuilt: _routeParser.onTreeNodeBuilt);
+  late final _appStateMachine = TreeStateMachine(_appStateTreeBuilder, buildContext: _buildContext);
   late final _routerDelegate = StateTreeRouterDelegate(
-    stateMachine: TreeStateMachine(_appStateTreeBuilder),
+    stateMachine: _appStateMachine,
     scaffoldPages: true,
     displayStateMachineErrors: true,
     pages: [
@@ -36,7 +40,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationParser: StateTreeRouteInfoParser(_appStateTreeBuilder.rootKey),
+      routeInformationParser: _routeParser,
       routerDelegate: _routerDelegate,
       color: Colors.amberAccent,
     );
